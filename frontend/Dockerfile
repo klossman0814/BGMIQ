@@ -27,6 +27,11 @@ server {
     # Allow larger CSV file uploads (default is 1MB)
     client_max_body_size 10M;
 
+    # Increase proxy timeouts for large CSV imports
+    proxy_connect_timeout 120s;
+    proxy_read_timeout 120s;
+    proxy_send_timeout 120s;
+
     # Gzip compression
     gzip on;
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript image/svg+xml;

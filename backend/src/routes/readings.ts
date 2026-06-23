@@ -203,7 +203,6 @@ readingsRouter.post('/import', multer().single('csvFile'), async (req: AuthReque
       return res.status(400).json({ error: 'Invalid file type. Please upload a CSV file.' });
     }
 
-    // Multer 2+ stores in memory by default
     const csvBuffer = req.file.buffer;
     if (!csvBuffer) {
       return res.status(400).json({ error: 'Failed to read uploaded file' });
@@ -231,12 +230,18 @@ readingsRouter.post('/import', multer().single('csvFile'), async (req: AuthReque
         .on('error', (e) => reject(e));
     });
 
-    const processedReadings: any[] = [];
+    const readingsToInsert: {
+      userId: number;
+      readingDatetime: Date;
+      glucoseValue: number;
+      mealContext: string;
+      source: string;
+      medicationTaken: boolean;
+    }[] = [];
     const errors: string[] = [];
 
     for (const row of results) {
       try {
-        // Parse glucose value from Libre3 CSV format
         if (!row['Historic Glucose mg/dL'] && !row['Scan Glucose mg/dL']) {
           continue;
         }
@@ -262,29 +267,73 @@ readingsRouter.post('/import', multer().single('csvFile'), async (req: AuthReque
           } catch {}
         }
 
-        processedReadings.push({
+        readingsToInsert.push({
+          userId: req.userId!,
           readingDatetime,
           glucoseValue,
+          mealContext: 'other',
+          source: 'CGM',
+          medicationTaken: false,
         });
       } catch (e: any) {
         errors.push(e.message);
       }
     }
 
-    const createdReadings = [];
-    for (const rd of processedReadings) {
-      const reading = await prisma.glucoseReading.create({
-        data: {
-          userId: req.userId!,
-          readingDatetime: rd.readingDatetime,
-          glucoseValue: rd.glucoseValue,
-          mealContext: 'other',
-          source: 'CGM',
-          medicationTaken: false,
-        },
+    if (readingsToInsert.length === 0) {
+      return res.json({
+        message: 'No valid glucose readings found in the CSV file',
+        imported: 0,
+        errors: errors.length > 0 ? errors : [],
       });
-      await createAlertsForReading(req.userId!, reading.id, reading.glucoseValue);
-      createdReadings.push(reading);
+    }
+
+    // Bulk insert all readings in a single query
+    const createdReadings = await prisma.glucoseReading.createManyAndReturn({
+      data: readingsToInsert,
+    });
+
+    // Create alerts in bulk (query profile once)
+    const profile = await prisma.patientProfile.findUnique({ where: { userId: req.userId! } });
+    const low = profile?.targetLow || 70;
+    const high = profile?.targetHigh || 180;
+
+    const alertsToInsert: {
+      userId: number;
+      readingId: number;
+      type: string;
+      severity: string;
+      message: string;
+    }[] = [];
+
+    for (const reading of createdReadings) {
+      let type: string, severity: string, message: string;
+
+      if (reading.glucoseValue < 54) {
+        type = 'critical_low';
+        severity = 'critical';
+        message = `CRITICAL LOW: Glucose reading ${reading.glucoseValue} mg/dL — below 54 mg/dL. Seek immediate medical attention.`;
+      } else if (reading.glucoseValue < low) {
+        type = 'low';
+        severity = 'warning';
+        message = `Low glucose: ${reading.glucoseValue} mg/dL — below target ${low} mg/dL. Consider treatment.`;
+      } else if (reading.glucoseValue > 250) {
+        type = 'critical_high';
+        severity = 'critical';
+        message = `CRITICAL HIGH: Glucose reading ${reading.glucoseValue} mg/dL — above 250 mg/dL. Seek medical attention.`;
+      } else if (reading.glucoseValue > high) {
+        type = 'high';
+        severity = 'warning';
+        message = `High glucose: ${reading.glucoseValue} mg/dL — above target ${high} mg/dL. Consider adjustment.`;
+      } else {
+        continue;
+      }
+
+      alertsToInsert.push({ userId: req.userId!, readingId: reading.id, type, severity, message });
+    }
+
+    if (alertsToInsert.length > 0) {
+      await prisma.alert.createMany({ data: alertsToInsert });
     }
 
     res.json({
