@@ -82,4 +82,9 @@ export const alertsApi = {
   markAllRead: () => api.put('/alerts/read-all'),
 };
 
+// Meals
+export const mealsApi = {
+  analysis: (months: number = 3) => api.get('/meals/analysis', { params: { months } }),
+};
+
 export default api;
