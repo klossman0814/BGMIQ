@@ -159,6 +159,17 @@ readingsRouter.delete('/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
+// Delete all readings for the current user
+readingsRouter.delete('/', async (req: AuthRequest, res: Response) => {
+  try {
+    const count = await prisma.glucoseReading.deleteMany({ where: { userId: req.userId! } });
+    await prisma.alert.deleteMany({ where: { userId: req.userId! } });
+    res.json({ message: `Deleted ${count.count} glucose readings`, deleted: count.count });
+  } catch {
+    res.status(500).json({ error: 'Failed to delete readings' });
+  }
+});
+
 // Helper: Create alerts based on glucose value
 async function createAlertsForReading(userId: number, readingId: number, glucoseValue: number) {
   const profile = await prisma.patientProfile.findUnique({ where: { userId } });

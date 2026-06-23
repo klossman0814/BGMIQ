@@ -42,6 +42,7 @@ export const readingsApi = {
   create: (data: Record<string, unknown>) => api.post('/readings', data),
   update: (id: number, data: Record<string, unknown>) => api.put(`/readings/${id}`, data),
   delete: (id: number) => api.delete(`/readings/${id}`),
+  deleteAll: () => api.delete('/readings'),
   import: (file: File) => {
     const formData = new FormData();
     formData.append('csvFile', file);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { profileApi } from '../services/api';
+import { profileApi, readingsApi } from '../services/api';
 import { PatientProfile, DiabetesType } from '../types';
 import { LoadingSpinner, ErrorMessage } from '../components/Shared';
 import { diabetesTypeLabel } from '../utils/helpers';
@@ -10,6 +10,8 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const [form, setForm] = useState({
     dateOfBirth: '',
@@ -51,6 +53,25 @@ export default function SettingsPage() {
       setError('Failed to save profile');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteReadings = async () => {
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      return;
+    }
+    setDeleting(true);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await readingsApi.deleteAll();
+      setSuccess(res.data.message);
+    } catch {
+      setError('Failed to delete readings');
+    } finally {
+      setDeleting(false);
+      setConfirmDelete(false);
     }
   };
 
@@ -151,6 +172,26 @@ export default function SettingsPage() {
             <div><p className="font-medium text-sm text-gray-900 dark:text-gray-100">Critical High</p><p className="text-xs text-gray-500 dark:text-gray-400">Above 250 mg/dL — Seek medical attention</p></div>
           </div>
         </div>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="card border-red-200 dark:border-red-900">
+        <h3 className="card-header text-red-600 dark:text-red-400">Danger Zone</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          Permanently delete all your glucose readings and associated alerts. This action cannot be undone.
+        </p>
+        <button
+          onClick={handleDeleteReadings}
+          disabled={deleting}
+          className={`btn ${confirmDelete ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800/40'}`}
+        >
+          {deleting ? 'Deleting...' : confirmDelete ? 'Click to Confirm — Delete All Readings' : 'Delete All Readings'}
+        </button>
+        {confirmDelete && (
+          <button onClick={() => setConfirmDelete(false)} className="btn-secondary ml-2">
+            Cancel
+          </button>
+        )}
       </div>
     </div>
   );
