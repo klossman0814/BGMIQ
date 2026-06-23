@@ -45,6 +45,7 @@ export const readingsApi = {
   import: (file: File) => {
     const formData = new FormData();
     formData.append('csvFile', file);
+    formData.append('timezoneOffset', String(new Date().getTimezoneOffset()));
     return api.post('/readings/import', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });

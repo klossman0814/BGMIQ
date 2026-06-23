@@ -203,6 +203,9 @@ readingsRouter.post('/import', multer().single('csvFile'), async (req: AuthReque
       return res.status(400).json({ error: 'Invalid file type. Please upload a CSV file.' });
     }
 
+    // Timezone offset sent by the browser (minutes from UTC, e.g., 240 for UTC-4)
+    const timezoneOffset = parseInt(req.body.timezoneOffset || '0');
+
     const csvBuffer = req.file.buffer;
     if (!csvBuffer) {
       return res.status(400).json({ error: 'Failed to read uploaded file' });
@@ -263,7 +266,7 @@ readingsRouter.post('/import', multer().single('csvFile'), async (req: AuthReque
             let hr = h;
             if (ampm === 'PM' && h !== 12) hr = h + 12;
             if (ampm === 'AM' && h === 12) hr = 0;
-            readingDatetime = new Date(y, m - 1, d, hr, min);
+            readingDatetime = new Date(Date.UTC(y, m - 1, d, hr, min) + timezoneOffset * 60 * 1000);
           } catch {}
         }
 
