@@ -1,0 +1,141 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile          PatientProfile?
+  glucoseReadings  GlucoseReading[]
+  medications      Medication[]
+  medicationLogs   MedicationLog[]
+  insulinLogs      InsulinLog[]
+  meals            Meal[]
+  activities       Activity[]
+  alerts           Alert[]
+}
+
+model PatientProfile {
+  id               Int     @id @default(autoincrement())
+  userId           Int     @unique
+  dateOfBirth      String?
+  diabetesType     String? // Type1, Type2, Gestational, Pre-diabetic, Other
+  glucoseUnit      String  @default("mg/dL")
+  targetLow        Int     @default(70)
+  targetHigh       Int     @default(180)
+  providerName     String?
+  emergencyContact String?
+  phone            String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GlucoseReading {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  readingDatetime DateTime @default(now())
+  glucoseValue    Int
+  mealContext     String   @default("other") // fasting, before_meal, after_meal, bedtime, overnight, other
+  source          String   @default("manual") // manual, meter, CGM
+  carbs           Int?
+  insulinUnits    Float?
+  medicationTaken Boolean  @default(false)
+  activityMinutes Int?
+  symptoms        String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alerts Alert[]
+
+  @@index([userId, readingDatetime])
+}
+
+model Medication {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  name         String
+  dosage       String
+  frequency    String
+  prescribedBy String?
+  startDate    DateTime?
+  endDate      DateTime?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs  MedicationLog[]
+}
+
+model MedicationLog {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  medicationId Int
+  takenAt      DateTime @default(now())
+  dose         String?
+  skipped      Boolean  @default(false)
+  notes        String?
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medication Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+}
+
+model InsulinLog {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  insulinType  String // rapid_acting, short_acting, intermediate, long_acting, pre_mixed
+  units        Float
+  administered DateTime @default(now())
+  notes        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Meal {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  name        String
+  carbs       Int?
+  mealType    String   // breakfast, lunch, dinner, snack
+  eatenAt     DateTime @default(now())
+  notes       String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Activity {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  name       String
+  duration   Int      // minutes
+  intensity  String?  // light, moderate, vigorous
+  startedAt  DateTime @default(now())
+  notes      String?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Alert {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  readingId   Int?
+  type        String   // critical_low, low, high, critical_high, no_data
+  severity    String   // info, warning, critical
+  message     String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reading GlucoseReading? @relation(fields: [readingId], references: [id], onDelete: Cascade)
+}

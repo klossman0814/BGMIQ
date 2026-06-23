@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: bgmiq-db
+    restart: unless-stopped
+    ports:
+      - "5439:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bgmiq
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bgmiq-api
+    restart: unless-stopped
+    ports:
+      - "3013:3013"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/bgmiq?schema=public"
+      JWT_SECRET: "bgmiq-docker-secret-change-in-production"
+      PORT: "3013"
+      FRONTEND_URL: "http://localhost:5154"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bgmiq-frontend
+    restart: unless-stopped
+    ports:
+      - "5154:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
