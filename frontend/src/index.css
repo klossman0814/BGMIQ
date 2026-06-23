@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply text-gray-800 antialiased;
+    @apply text-gray-800 dark:text-gray-100 antialiased bg-white dark:bg-gray-900;
   }
 }
 
@@ -16,7 +16,7 @@
     @apply btn bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800;
   }
   .btn-secondary {
-    @apply btn bg-gray-200 text-gray-700 hover:bg-gray-300;
+    @apply btn bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600;
   }
   .btn-danger {
     @apply btn bg-red-600 text-white hover:bg-red-700;
@@ -25,40 +25,40 @@
     @apply px-3 py-1.5 text-sm;
   }
   .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all;
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
   }
   .label {
-    @apply block text-sm font-medium text-gray-700 mb-1;
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
   }
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6;
   }
   .card-header {
-    @apply text-lg font-semibold text-gray-900 mb-4;
+    @apply text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4;
   }
   .stat-card {
     @apply card flex flex-col;
   }
   .stat-value {
-    @apply text-3xl font-bold text-gray-900;
+    @apply text-3xl font-bold text-gray-900 dark:text-gray-100;
   }
   .stat-label {
-    @apply text-sm text-gray-500 mt-1;
+    @apply text-sm text-gray-500 dark:text-gray-400 mt-1;
   }
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
-  .badge-green { @apply badge bg-green-100 text-green-800; }
-  .badge-yellow { @apply badge bg-yellow-100 text-yellow-800; }
-  .badge-red { @apply badge bg-red-100 text-red-800; }
-  .badge-blue { @apply badge bg-blue-100 text-blue-800; }
-  .badge-gray { @apply badge bg-gray-100 text-gray-800; }
+  .badge-green { @apply badge bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200; }
+  .badge-yellow { @apply badge bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200; }
+  .badge-red { @apply badge bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200; }
+  .badge-blue { @apply badge bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200; }
+  .badge-gray { @apply badge bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200; }
 
-  .glucose-critical-low { @apply text-red-900 bg-red-100; }
-  .glucose-low { @apply text-orange-800 bg-orange-100; }
-  .glucose-in-range { @apply text-green-800 bg-green-100; }
-  .glucose-high { @apply text-yellow-800 bg-yellow-100; }
-  .glucose-critical-high { @apply text-red-800 bg-red-100; }
+  .glucose-critical-low { @apply text-red-900 dark:text-red-200 bg-red-100 dark:bg-red-900/50; }
+  .glucose-low { @apply text-orange-800 dark:text-orange-200 bg-orange-100 dark:bg-orange-900/50; }
+  .glucose-in-range { @apply text-green-800 dark:text-green-200 bg-green-100 dark:bg-green-900/50; }
+  .glucose-high { @apply text-yellow-800 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-900/50; }
+  .glucose-critical-high { @apply text-red-800 dark:text-red-200 bg-red-100 dark:bg-red-900/50; }
 }
 
 /* Glucose color classes */
@@ -68,8 +68,34 @@
 .text-glucose-high { color: #F39C12; }
 .text-glucose-critical-high { color: #E74C3C; }
 
+.dark .text-glucose-critical-low { color: #FF6B6B; }
+.dark .text-glucose-low { color: #FFA07A; }
+.dark .text-glucose-in-range { color: #6FCF97; }
+.dark .text-glucose-high { color: #F5C542; }
+.dark .text-glucose-critical-high { color: #FF4757; }
+
 .bg-glucose-critical-low { background-color: #8B0000; }
 .bg-glucose-low { background-color: #FF6B35; }
 .bg-glucose-in-range { background-color: #2ECC71; }
 .bg-glucose-high { background-color: #F39C12; }
 .bg-glucose-critical-high { background-color: #E74C3C; }
+
+/* Recharts text color for dark mode */
+.dark .recharts-text {
+  fill: #9CA3AF !important;
+}
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: #374151 !important;
+}
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #1F2937 !important;
+  border-color: #374151 !important;
+}
+.dark .recharts-default-tooltip .recharts-tooltip-label {
+  color: #D1D5DB !important;
+}
+.dark .recharts-legend-item-text {
+  fill: #9CA3AF !important;
+  color: #9CA3AF !important;
+}
