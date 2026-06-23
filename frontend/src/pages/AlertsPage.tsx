@@ -5,9 +5,9 @@ import { LoadingSpinner, ErrorMessage, EmptyState } from '../components/Shared';
 import { formatDateTime } from '../utils/helpers';
 
 const SEVERITY_COLORS: Record<string, string> = {
-  critical: 'border-red-600 bg-red-50',
-  warning: 'border-yellow-500 bg-yellow-50',
-  info: 'border-blue-500 bg-blue-50',
+  critical: 'border-red-600 bg-red-50 dark:bg-red-900/20',
+  warning: 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20',
+  info: 'border-blue-500 bg-blue-50 dark:bg-blue-900/20',
 };
 
 const TYPE_ICONS: Record<string, string> = {
@@ -54,13 +54,13 @@ export default function AlertsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Alerts</h1>
-          {unreadCount > 0 && <p className="text-sm text-gray-500">{unreadCount} unread</p>}
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Alerts</h1>
+          {unreadCount > 0 && <p className="text-sm text-gray-500 dark:text-gray-400">{unreadCount} unread</p>}
         </div>
         <div className="flex gap-2">
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            <button onClick={() => setFilter('all')} className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${filter === 'all' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500'}`}>All</button>
-            <button onClick={() => setFilter('unread')} className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${filter === 'unread' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500'}`}>Unread</button>
+          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <button onClick={() => setFilter('all')} className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${filter === 'all' ? 'bg-white dark:bg-gray-600 shadow-sm text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>All</button>
+            <button onClick={() => setFilter('unread')} className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${filter === 'unread' ? 'bg-white dark:bg-gray-600 shadow-sm text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>Unread</button>
           </div>
           {unreadCount > 0 && (
             <button onClick={markAllRead} className="btn-secondary btn-sm">Mark All Read</button>
@@ -73,21 +73,22 @@ export default function AlertsPage() {
       ) : (
         <div className="space-y-3">
           {alerts.map(a => (
-            <div key={a.id} className={`rounded-lg border-l-4 p-4 transition-colors ${SEVERITY_COLORS[a.severity] || 'bg-white border-gray-300'} ${a.isRead ? 'opacity-60' : ''}`}>
+            <div key={a.id} className={`rounded-lg border-l-4 p-4 transition-colors ${SEVERITY_COLORS[a.severity] || 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'} ${a.isRead ? 'opacity-60' : ''}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
                   <span className="text-xl flex-shrink-0">{TYPE_ICONS[a.type] || '🔔'}</span>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-xs font-semibold uppercase px-1.5 py-0.5 rounded ${a.severity === 'critical' ? 'text-red-700 bg-red-100' : a.severity === 'warning' ? 'text-yellow-700 bg-yellow-100' : 'text-blue-700 bg-blue-100'}`}>
+                      <span className={`text-xs font-semibold uppercase px-1.5 py-0.5 rounded ${a.severity === 'critical' ? 'text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-900/40' : a.severity === 'warning' ? 'text-yellow-700 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/40' : 'text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/40'}`}>
                         {a.severity}
                       </span>
-                      <span className="text-xs text-gray-400">{formatDateTime(a.createdAt)}</span>
-                      {!a.isRead && <span className="w-2 h-2 rounded-full bg-blue-500" />}
+                      <span className="text-xs text-gray-400 dark:text-gray-500">{formatDateTime(a.createdAt)}</span>
+                      {!a.isRead && <span className="w-2 h-2 rounded-full bg-blue-500" />
+}
                     </div>
-                    <p className="text-sm text-gray-800 mt-1">{a.message}</p>
+                    <p className="text-sm text-gray-800 dark:text-gray-200 mt-1">{a.message}</p>
                     {a.reading && (
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Glucose: {a.reading.glucoseValue} mg/dL at {formatDateTime(a.reading.readingDatetime)}
                       </p>
                     )}

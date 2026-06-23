@@ -45,8 +45,13 @@ echo "✅ PostgreSQL is ready"
 echo "📦 Running Prisma migrations..."
 npx prisma db push --accept-data-loss 2>&1
 
-echo "🌱 Seeding database..."
-npx prisma db seed 2>&1 || echo "⚠️ Seed may have already run (continuing)"
+echo "🌱 Seeding database (if empty)..."
+USER_EXISTS=$(PGPASSWORD="${DB_PASSWORD:-postgres}" psql -h "${DB_HOST:-db}" -p "${DB_PORT:-5432}" -U "${DB_USER:-postgres}" -d bgmiq -t -c "SELECT count(*) FROM \"User\" WHERE email='demo@bgmiq.com';" 2>/dev/null | tr -d ' ')
+if [ "$USER_EXISTS" != "0" ] && [ -n "$USER_EXISTS" ]; then
+  echo "✅ Database already seeded — skipping"
+else
+  npx prisma db seed 2>&1 || echo "⚠️ Seed failed (continuing)"
+fi
 
 echo "🚀 Starting BGMIQ API server on port ${PORT:-3013}"
 exec node dist/index.js

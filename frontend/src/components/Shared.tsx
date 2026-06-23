@@ -4,8 +4,8 @@ export function LoadingSpinner({ text = 'Loading...' }: { text?: string }) {
   return (
     <div className="flex items-center justify-center py-12">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
-        <p className="text-sm text-gray-500">{text}</p>
+        <div className="w-8 h-8 border-4 border-primary-200 dark:border-primary-800 border-t-primary-600 rounded-full animate-spin" />
+        <p className="text-sm text-gray-500 dark:text-gray-400">{text}</p>
       </div>
     </div>
   );
@@ -13,10 +13,10 @@ export function LoadingSpinner({ text = 'Loading...' }: { text?: string }) {
 
 export function ErrorMessage({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
-    <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-      <p className="text-red-700 text-sm">{message}</p>
+    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-center">
+      <p className="text-red-700 dark:text-red-300 text-sm">{message}</p>
       {onRetry && (
-        <button onClick={onRetry} className="mt-2 text-sm text-red-600 underline hover:no-underline">
+        <button onClick={onRetry} className="mt-2 text-sm text-red-600 dark:text-red-400 underline hover:no-underline">
           Try again
         </button>
       )}
@@ -28,8 +28,8 @@ export function EmptyState({ icon = '📭', title, description, children }: { ic
   return (
     <div className="text-center py-12">
       <div className="text-4xl mb-4">{icon}</div>
-      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-      {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{title}</h3>
+      {description && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{description}</p>}
       {children}
     </div>
   );
@@ -53,10 +53,10 @@ export function GlucoseBadge({ value }: { value: number }) {
 
 export function KpiCard({ label, value, unit, color }: { label: string; value: string | number; unit?: string; color?: string }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-100 p-4 text-center shadow-sm">
-      <p className="text-xs text-gray-500 mb-1">{label}</p>
-      <p className={`text-xl font-bold ${color || 'text-gray-900'}`}>
-        {value}{unit && <span className="text-sm font-normal text-gray-400 ml-0.5">{unit}</span>}
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 p-4 text-center shadow-sm">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</p>
+      <p className={`text-xl font-bold ${color || 'text-gray-900 dark:text-gray-100'}`}>
+        {value}{unit && <span className="text-sm font-normal text-gray-400 dark:text-gray-500 ml-0.5">{unit}</span>}
       </p>
     </div>
   );
@@ -66,12 +66,12 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
-      <div className="bg-white rounded-xl shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between p-5 border-b">
-          <h2 className="text-lg font-semibold">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-5 border-b dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
+          <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl">&times;</button>
         </div>
-        <div className="p-5">{children}</div>
+        <div className="p-5 text-gray-800 dark:text-gray-200">{children}</div>
       </div>
     </div>
   );

@@ -79,7 +79,7 @@ export default function GlucoseLogPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Glucose Log</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Glucose Log</h1>
         <div className="flex gap-2">
           <button 
             onClick={() => setShowImportModal(true)} 
@@ -105,11 +105,11 @@ export default function GlucoseLogPage() {
             </EmptyState>
       ) : (
         <>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <tr className="bg-gray-50 dark:bg-gray-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     <th className="px-4 py-3">Date & Time</th>
                     <th className="px-4 py-3">Glucose</th>
                     <th className="px-4 py-3">Meal Context</th>
@@ -120,18 +120,18 @@ export default function GlucoseLogPage() {
                     <th className="px-4 py-3">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                   {readings.map((r) => (
-                    <tr key={r.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                       <td className="px-4 py-3 text-sm">{formatDateTime(r.readingDatetime)}</td>
                       <td className="px-4 py-3">
                         <GlucoseBadge value={r.glucoseValue} />
                       </td>
                       <td className="px-4 py-3 text-sm">{mealContextLabel(r.mealContext)}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{sourceLabel(r.source)}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{sourceLabel(r.source)}</td>
                       <td className="px-4 py-3 text-sm">{r.carbs ? `${r.carbs}g` : '-'}</td>
                       <td className="px-4 py-3 text-sm">{r.insulinUnits ? `${r.insulinUnits}U` : '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500 max-w-[120px] truncate">{r.symptoms || '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[120px] truncate">{r.symptoms || '-'}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
                           <button onClick={() => navigate(`/readings/${r.id}/edit`)} className="text-xs text-primary-600 hover:underline">Edit</button>
@@ -149,7 +149,7 @@ export default function GlucoseLogPage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-4">
               <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="btn-secondary btn-sm">Previous</button>
-              <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {totalPages}</span>
               <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="btn-secondary btn-sm">Next</button>
             </div>
           )}
@@ -159,17 +159,17 @@ export default function GlucoseLogPage() {
       {/* Import Modal */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-bold mb-4">Import from Libre3 CSV</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Import from Libre3 CSV</h2>
             
             {importResult ? (
               <div className="mb-4">
-                <p className="font-medium mb-2">{importResult.message}</p>
-                <p className="text-sm text-gray-600 mb-3">Successfully imported: {importResult.imported} readings</p>
+                <p className="font-medium mb-2 text-gray-900 dark:text-gray-100">{importResult.message}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Successfully imported: {importResult.imported} readings</p>
                 {importResult.errors.length > 0 && (
                   <div className="mt-3">
-                    <p className="text-sm font-medium text-red-600 mb-1">Errors:</p>
-                    <ul className="text-xs text-red-600 space-y-1 max-h-32 overflow-y-auto">
+                    <p className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">Errors:</p>
+                    <ul className="text-xs text-red-600 dark:text-red-400 space-y-1 max-h-32 overflow-y-auto">
                       {importResult.errors.map((error, index) => (
                         <li key={index}>{error}</li>
                       ))}
@@ -186,21 +186,21 @@ export default function GlucoseLogPage() {
             ) : (
               <form onSubmit={handleImportSubmit}>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Select CSV File
                   </label>
                   <input
                     type="file"
                     accept=".csv"
                     onChange={handleFileChange}
-                    className="block w-full text-sm text-gray-500
+                    className="block w-full text-sm text-gray-500 dark:text-gray-400
                       file:mr-4 file:py-2 file:px-4
                       file:rounded-md file:border-0
                       file:text-sm file:font-semibold
-                      file:bg-blue-50 file:text-blue-700
-                      hover:file:bg-blue-100"
+                      file:bg-blue-50 dark:file:bg-blue-900/40 file:text-blue-700 dark:file:text-blue-300
+                      hover:file:bg-blue-100 dark:hover:file:bg-blue-800/40"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     The CSV file should contain glucose readings with date/time and glucose value columns
                   </p>
                 </div>

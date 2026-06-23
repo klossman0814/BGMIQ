@@ -150,7 +150,7 @@ export default function DashboardPage() {
           ) : <EmptyState title="No data" icon="📊" />}
           <div className="flex flex-wrap gap-2 mt-2 justify-center">
             {pieData.map((d, i) => (
-              <span key={i} className="text-xs flex items-center gap-1">
+              <span key={i} className="text-xs flex items-center gap-1 text-gray-700 dark:text-gray-300">
                 <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: d.color }} />
                 {d.name}
               </span>

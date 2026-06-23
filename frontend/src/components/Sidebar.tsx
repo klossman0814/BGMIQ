@@ -20,15 +20,15 @@ export default function Sidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-6 border-b border-gray-100">
+    <aside className="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+      <div className="p-6 border-b border-gray-100 dark:border-gray-700">
         <NavLink to="/dashboard" className="flex items-center gap-3">
           <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-lg">B</span>
           </div>
           <div>
-            <h2 className="font-bold text-gray-900">BGMIQ</h2>
-            <p className="text-xs text-gray-500">Glucose Monitor</p>
+            <h2 className="font-bold text-gray-900 dark:text-gray-100">BGMIQ</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Glucose Monitor</p>
           </div>
         </NavLink>
       </div>
@@ -42,8 +42,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-primary-50 text-primary-700'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
               }`
             }
           >
@@ -53,10 +53,10 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-gray-100">
+      <div className="p-4 border-t border-gray-100 dark:border-gray-700">
         <button
           onClick={logout}
-          className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-700 w-full transition-colors"
+          className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400 w-full transition-colors"
         >
           <span className="text-lg">🚪</span>
           <span>Logout</span>

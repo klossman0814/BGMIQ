@@ -81,7 +81,7 @@ export default function MedicationsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Medications</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Medications</h1>
         <button onClick={openNew} className="btn-primary">+ Add Medication</button>
       </div>
 
@@ -109,20 +109,20 @@ export default function MedicationsPage() {
             {activeMeds.map(med => {
               const logged = todayLogs.find(l => l.medicationId === med.id);
               return (
-                <div key={med.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={med.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                   <div>
-                    <p className="font-medium text-gray-900">{med.name}</p>
-                    <p className="text-xs text-gray-500">{med.dosage} — {med.frequency}</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{med.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{med.dosage} — {med.frequency}</p>
                   </div>
                   <div className="flex gap-2">
                     {logged ? (
-                      <span className={`text-sm font-medium ${logged.skipped ? 'text-red-600' : 'text-green-600'}`}>
+                      <span className={`text-sm font-medium ${logged.skipped ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
                         {logged.skipped ? '❌ Skipped' : '✅ Taken'}
                       </span>
                     ) : (
                       <>
-                        <button onClick={() => logTaken(med.id)} className="btn-sm bg-green-100 text-green-700 hover:bg-green-200 rounded-lg">✅ Taken</button>
-                        <button onClick={() => logSkipped(med.id)} className="btn-sm bg-red-100 text-red-700 hover:bg-red-200 rounded-lg">❌ Skip</button>
+                        <button onClick={() => logTaken(med.id)} className="btn-sm bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800 rounded-lg">✅ Taken</button>
+                        <button onClick={() => logSkipped(med.id)} className="btn-sm bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 rounded-lg">❌ Skip</button>
                       </>
                     )}
                   </div>
@@ -131,8 +131,8 @@ export default function MedicationsPage() {
             })}
           </div>
           {todayLogs.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500">
+            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 {todayLogs.filter(l => !l.skipped).length}/{activeMeds.length} medications taken today
               </p>
             </div>
@@ -145,16 +145,16 @@ export default function MedicationsPage() {
         <EmptyState icon="💊" title="No medications" description="Add your medications to track adherence" />
       ) : (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">All Medications</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">All Medications</h3>
           <div className="grid gap-3">
             {medications.map(med => (
               <div key={med.id} className={`card flex items-center justify-between ${!med.isActive ? 'opacity-60' : ''}`}>
                 <div className="flex items-center gap-4">
                   <span className="text-2xl">💊</span>
                   <div>
-                    <h3 className="font-semibold text-gray-900">{med.name}</h3>
-                    <p className="text-sm text-gray-500">{med.dosage} — {med.frequency}</p>
-                    {med.prescribedBy && <p className="text-xs text-gray-400">Prescribed by {med.prescribedBy}</p>}
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">{med.name}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{med.dosage} — {med.frequency}</p>
+                    {med.prescribedBy && <p className="text-xs text-gray-400 dark:text-gray-500">Prescribed by {med.prescribedBy}</p>}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -178,7 +178,7 @@ export default function MedicationsPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <tr className="bg-gray-50 dark:bg-gray-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   <th className="px-3 py-2">Medication</th>
                   <th className="px-3 py-2">Status</th>
                   <th className="px-3 py-2">Dose</th>
@@ -186,14 +186,14 @@ export default function MedicationsPage() {
                   <th className="px-3 py-2">Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {allLogs.slice(0, 50).map(log => (
-                  <tr key={log.id} className="hover:bg-gray-50">
+                  <tr key={log.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
                     <td className="px-3 py-2 text-sm font-medium">{log.medication.name}</td>
                     <td className="px-3 py-2">{log.skipped ? <span className="badge-red">Skipped</span> : <span className="badge-green">Taken</span>}</td>
                     <td className="px-3 py-2 text-sm">{log.dose || '-'}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{formatDateTime(log.takenAt)}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500 max-w-[120px] truncate">{log.notes || '-'}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">{formatDateTime(log.takenAt)}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 max-w-[120px] truncate">{log.notes || '-'}</td>
                   </tr>
                 ))}
               </tbody>

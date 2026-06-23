@@ -32,6 +32,7 @@ services:
       JWT_SECRET: "bgmiq-docker-secret-change-in-production"
       PORT: "3013"
       FRONTEND_URL: "http://localhost:5154,http://192.168.2.22:5154"
+      DB_PASSWORD: "postgres"
       DB_HOST: "db"
       DB_PORT: "5432"
       DB_USER: "postgres"

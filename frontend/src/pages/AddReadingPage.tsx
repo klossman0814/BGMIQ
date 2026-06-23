@@ -90,12 +90,12 @@ export default function AddReadingPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
         {isEdit ? 'Edit Reading' : 'Add New Reading'}
       </h1>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm mb-6">
           {error}
         </div>
       )}
@@ -161,7 +161,7 @@ export default function AddReadingPage() {
           <div className="flex items-center">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={form.medicationTaken} onChange={(e) => setForm({ ...form, medicationTaken: e.target.checked })} className="w-4 h-4 text-primary-600 rounded" />
-              <span className="text-sm text-gray-700">Medication Taken</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">Medication Taken</span>
             </label>
           </div>
         </div>

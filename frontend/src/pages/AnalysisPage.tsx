@@ -43,12 +43,12 @@ export default function AnalysisPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Analysis</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Analysis</h1>
         <div className="flex gap-2">
           {[7, 14, 30].map((d) => (
             <button key={d} onClick={() => setDays(d)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                days === d ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                days === d ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               {d}d
@@ -68,7 +68,7 @@ export default function AnalysisPage() {
         <KpiCard label="GMI" value={`${basic.gmi}%`} color={basic.gmi > 0 ? (basic.gmi < 7 ? 'text-green-600' : 'text-yellow-600') : 'text-gray-400'} />
         <KpiCard label="Readings" value={basic.totalCount} />
       </div>
-      {basic.gmi > 0 && <p className="text-xs text-gray-500 text-center -mt-3">GMI: {getGMILevel(basic.gmi).label}</p>}
+      {basic.gmi > 0 && <p className="text-xs text-gray-500 dark:text-gray-400 text-center -mt-3">GMI: {getGMILevel(basic.gmi).label}</p>}
 
       {/* Detailed KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

@@ -99,7 +99,7 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Reports</h1>
 
       <div className="card">
         <h3 className="card-header">Generate Doctor's Report</h3>
@@ -178,11 +178,11 @@ export default function ReportsPage() {
               <h3 className="card-header">Active Medications</h3>
               <div className="space-y-2">
                 {report.medications.map((m, i) => (
-                  <div key={i} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                  <div key={i} className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <span className="text-lg">💊</span>
                     <div>
-                      <p className="font-medium text-gray-900">{m.name}</p>
-                      <p className="text-sm text-gray-500">{m.dosage} — {m.frequency}</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{m.name}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{m.dosage} — {m.frequency}</p>
                     </div>
                   </div>
                 ))}

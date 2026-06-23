@@ -58,11 +58,11 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Settings & Profile</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Settings & Profile</h1>
 
       {error && <ErrorMessage message={error} />}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg text-sm">
           {success}
         </div>
       )}
@@ -130,25 +130,25 @@ export default function SettingsPage() {
       <div className="card">
         <h3 className="card-header">Glucose Range Reference</h3>
         <div className="space-y-2">
-          <div className="flex items-center gap-3 p-2 rounded bg-red-900/10">
+          <div className="flex items-center gap-3 p-2 rounded bg-red-900/10 dark:bg-red-900/30">
             <span className="w-3 h-3 rounded-full bg-glucose-critical-low" />
-            <div><p className="font-medium text-sm">Critical Low</p><p className="text-xs text-gray-500">Below 54 mg/dL — Seek immediate medical attention</p></div>
+            <div><p className="font-medium text-sm text-gray-900 dark:text-gray-100">Critical Low</p><p className="text-xs text-gray-500 dark:text-gray-400">Below 54 mg/dL — Seek immediate medical attention</p></div>
           </div>
-          <div className="flex items-center gap-3 p-2 rounded bg-orange-50">
+          <div className="flex items-center gap-3 p-2 rounded bg-orange-50 dark:bg-orange-900/20">
             <span className="w-3 h-3 rounded-full bg-glucose-low" />
-            <div><p className="font-medium text-sm">Low</p><p className="text-xs text-gray-500">54–69 mg/dL — Consider fast-acting carbs</p></div>
+            <div><p className="font-medium text-sm text-gray-900 dark:text-gray-100">Low</p><p className="text-xs text-gray-500 dark:text-gray-400">54–69 mg/dL — Consider fast-acting carbs</p></div>
           </div>
-          <div className="flex items-center gap-3 p-2 rounded bg-green-50">
+          <div className="flex items-center gap-3 p-2 rounded bg-green-50 dark:bg-green-900/20">
             <span className="w-3 h-3 rounded-full bg-glucose-in-range" />
-            <div><p className="font-medium text-sm">In Range</p><p className="text-xs text-gray-500">70–180 mg/dL — Target range</p></div>
+            <div><p className="font-medium text-sm text-gray-900 dark:text-gray-100">In Range</p><p className="text-xs text-gray-500 dark:text-gray-400">70–180 mg/dL — Target range</p></div>
           </div>
-          <div className="flex items-center gap-3 p-2 rounded bg-yellow-50">
+          <div className="flex items-center gap-3 p-2 rounded bg-yellow-50 dark:bg-yellow-900/20">
             <span className="w-3 h-3 rounded-full bg-glucose-high" />
-            <div><p className="font-medium text-sm">High</p><p className="text-xs text-gray-500">181–250 mg/dL — Consider adjustment</p></div>
+            <div><p className="font-medium text-sm text-gray-900 dark:text-gray-100">High</p><p className="text-xs text-gray-500 dark:text-gray-400">181–250 mg/dL — Consider adjustment</p></div>
           </div>
-          <div className="flex items-center gap-3 p-2 rounded bg-red-50">
+          <div className="flex items-center gap-3 p-2 rounded bg-red-50 dark:bg-red-900/20">
             <span className="w-3 h-3 rounded-full bg-glucose-critical-high" />
-            <div><p className="font-medium text-sm">Critical High</p><p className="text-xs text-gray-500">Above 250 mg/dL — Seek medical attention</p></div>
+            <div><p className="font-medium text-sm text-gray-900 dark:text-gray-100">Critical High</p><p className="text-xs text-gray-500 dark:text-gray-400">Above 250 mg/dL — Seek medical attention</p></div>
           </div>
         </div>
       </div>

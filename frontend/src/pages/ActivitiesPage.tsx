@@ -68,7 +68,7 @@ export default function ActivitiesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Activities</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Activities</h1>
         <button onClick={openNew} className="btn-primary">+ Add Activity</button>
       </div>
 
@@ -109,10 +109,10 @@ export default function ActivitiesPage() {
       {activities.length === 0 ? (
         <EmptyState icon="🏃" title="No activities logged" description="Track your physical activities" />
       ) : (
-        <div className="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <tr className="bg-gray-50 dark:bg-gray-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 <th className="px-4 py-3">Activity</th>
                 <th className="px-4 py-3">Duration</th>
                 <th className="px-4 py-3">Intensity</th>
@@ -121,14 +121,14 @@ export default function ActivitiesPage() {
                 <th className="px-4 py-3">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {activities.map(a => (
-                <tr key={a.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">{a.name}</td>
+                <tr key={a.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{a.name}</td>
                   <td className="px-4 py-3">{a.duration} min</td>
                   <td className="px-4 py-3">{intensityBadge(a.intensity)}</td>
                   <td className="px-4 py-3 text-sm">{formatDateTime(a.startedAt)}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500 max-w-[150px] truncate">{a.notes || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[150px] truncate">{a.notes || '-'}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button onClick={() => openEdit(a)} className="text-xs text-primary-600 hover:underline">Edit</button>

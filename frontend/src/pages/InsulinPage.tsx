@@ -67,7 +67,7 @@ export default function InsulinPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Insulin Log</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Insulin Log</h1>
         <button onClick={openNew} className="btn-primary">+ Add Dose</button>
       </div>
 
@@ -104,10 +104,10 @@ export default function InsulinPage() {
       {logs.length === 0 ? (
         <EmptyState icon="💉" title="No insulin logged" description="Track your insulin doses" />
       ) : (
-        <div className="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <tr className="bg-gray-50 dark:bg-gray-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 <th className="px-4 py-3">Type</th>
                 <th className="px-4 py-3">Units</th>
                 <th className="px-4 py-3">Date & Time</th>
@@ -115,13 +115,13 @@ export default function InsulinPage() {
                 <th className="px-4 py-3">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {logs.map(l => (
-                <tr key={l.id} className="hover:bg-gray-50">
+                <tr key={l.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
                   <td className="px-4 py-3"><span className="badge-blue">{INSULIN_TYPES.find(t => t.value === l.insulinType)?.label || l.insulinType}</span></td>
                   <td className="px-4 py-3 font-semibold">{l.units} U</td>
                   <td className="px-4 py-3 text-sm">{formatDateTime(l.administered)}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{l.notes || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{l.notes || '-'}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button onClick={() => openEdit(l)} className="text-xs text-primary-600 hover:underline">Edit</button>
