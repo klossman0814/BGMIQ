@@ -302,9 +302,10 @@ readingsRouter.post('/import', multer().single('csvFile'), async (req: AuthReque
       });
     }
 
-    // Bulk insert all readings in a single query
+    // Bulk insert all readings in a single query, skipping duplicates
     const createdReadings = await prisma.glucoseReading.createManyAndReturn({
       data: readingsToInsert,
+      skipDuplicates: true,
     });
 
     // Create alerts in bulk (query profile once)
@@ -350,9 +351,12 @@ readingsRouter.post('/import', multer().single('csvFile'), async (req: AuthReque
       await prisma.alert.createMany({ data: alertsToInsert });
     }
 
+    const skipped = readingsToInsert.length - createdReadings.length;
+
     res.json({
-      message: `Successfully imported ${createdReadings.length} glucose readings`,
+      message: `Successfully imported ${createdReadings.length} glucose readings${skipped > 0 ? ` (${skipped} duplicates skipped)` : ''}`,
       imported: createdReadings.length,
+      skipped,
       errors: errors.length > 0 ? errors : [],
     });
   } catch (err: any) {

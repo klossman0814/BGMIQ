@@ -11,6 +11,7 @@ export default function GlucoseLogPage() {
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [showImportModal, setShowImportModal] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -24,6 +25,7 @@ export default function GlucoseLogPage() {
       .then((res) => {
         setReadings(res.data.readings);
         setTotalPages(res.data.pagination.totalPages);
+        setTotalCount(res.data.pagination.total);
       })
       .catch(() => setError('Failed to load readings'))
       .finally(() => setLoading(false));
@@ -80,7 +82,10 @@ export default function GlucoseLogPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Glucose Log</h1>
-        <div className="flex gap-2">
+        {totalCount > 0 && (
+          <p className="text-sm text-gray-500 dark:text-gray-400">{totalCount} total entries</p>
+        )}
+        <div className="flex gap-2 ml-auto">
           <button 
             onClick={() => setShowImportModal(true)} 
             className="btn-secondary"

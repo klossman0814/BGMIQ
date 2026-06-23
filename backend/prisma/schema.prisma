@@ -59,7 +59,7 @@ model GlucoseReading {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   alerts Alert[]
 
-  @@index([userId, readingDatetime])
+  @@unique([userId, readingDatetime, glucoseValue])
 }
 
 model Medication {
