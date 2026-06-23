@@ -45,7 +45,7 @@ export default function AnalysisPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Analysis</h1>
         <div className="flex gap-2">
-          {[7, 14, 30].map((d) => (
+          {[7, 14, 30, 60, 90, 120].map((d) => (
             <button key={d} onClick={() => setDays(d)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 days === d ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
