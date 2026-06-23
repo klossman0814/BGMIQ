@@ -42,6 +42,13 @@ export const readingsApi = {
   create: (data: Record<string, unknown>) => api.post('/readings', data),
   update: (id: number, data: Record<string, unknown>) => api.put(`/readings/${id}`, data),
   delete: (id: number) => api.delete(`/readings/${id}`),
+  import: (file: File) => {
+    const formData = new FormData();
+    formData.append('csvFile', file);
+    return api.post('/readings/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
 };
 
 // Dashboard

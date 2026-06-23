@@ -2,6 +2,9 @@ import { Router, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../prisma';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
+import multer from 'multer';
+import csv from 'csv-parser';
+import { Readable } from 'stream';
 
 export const readingsRouter = Router();
 readingsRouter.use(authMiddleware);
@@ -188,3 +191,109 @@ async function createAlertsForReading(userId: number, readingId: number, glucose
     data: { userId, readingId, type, severity, message },
   });
 }
+
+// Import CSV file with glucose readings
+readingsRouter.post('/import', multer().single('csvFile'), async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No CSV file uploaded' });
+    }
+
+    if (req.file.mimetype !== 'text/csv' && !req.file.originalname.endsWith('.csv')) {
+      return res.status(400).json({ error: 'Invalid file type. Please upload a CSV file.' });
+    }
+
+    // Multer 2+ stores in memory by default
+    const csvBuffer = req.file.buffer;
+    if (!csvBuffer) {
+      return res.status(400).json({ error: 'Failed to read uploaded file' });
+    }
+
+    // Libre3 CSV sometimes has a metadata row before the header row.
+    // Find the actual header row (starts with "Device,") and skip anything before it.
+    const raw = csvBuffer.toString('utf-8');
+    const lines = raw.split('\n');
+    let startLine = 0;
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].trim().startsWith('Device,')) {
+        startLine = i;
+        break;
+      }
+    }
+
+    const results: any[] = [];
+
+    await new Promise<void>((resolve, reject) => {
+      Readable.from(lines.slice(startLine).join('\n'))
+        .pipe(csv())
+        .on('data', (row: any) => results.push(row))
+        .on('end', () => resolve())
+        .on('error', (e) => reject(e));
+    });
+
+    const processedReadings: any[] = [];
+    const errors: string[] = [];
+
+    for (const row of results) {
+      try {
+        // Parse glucose value from Libre3 CSV format
+        if (!row['Historic Glucose mg/dL'] && !row['Scan Glucose mg/dL']) {
+          continue;
+        }
+
+        const glucoseValue = parseInt(row['Historic Glucose mg/dL'] || row['Scan Glucose mg/dL'], 10);
+
+        if (isNaN(glucoseValue) || glucoseValue < 20 || glucoseValue > 600) {
+          errors.push(`Invalid glucose value ${glucoseValue} in row`);
+          continue;
+        }
+
+        let readingDatetime = new Date();
+        if (row['Device Timestamp']) {
+          try {
+            const parts = row['Device Timestamp'].split(' ');
+            const [m, d, y] = parts[0].split('-').map(Number);
+            const [h, min] = parts[1].split(':').map(Number);
+            const ampm = parts[2];
+            let hr = h;
+            if (ampm === 'PM' && h !== 12) hr = h + 12;
+            if (ampm === 'AM' && h === 12) hr = 0;
+            readingDatetime = new Date(y, m - 1, d, hr, min);
+          } catch {}
+        }
+
+        processedReadings.push({
+          readingDatetime,
+          glucoseValue,
+        });
+      } catch (e: any) {
+        errors.push(e.message);
+      }
+    }
+
+    const createdReadings = [];
+    for (const rd of processedReadings) {
+      const reading = await prisma.glucoseReading.create({
+        data: {
+          userId: req.userId!,
+          readingDatetime: rd.readingDatetime,
+          glucoseValue: rd.glucoseValue,
+          mealContext: 'other',
+          source: 'CGM',
+          medicationTaken: false,
+        },
+      });
+      await createAlertsForReading(req.userId!, reading.id, reading.glucoseValue);
+      createdReadings.push(reading);
+    }
+
+    res.json({
+      message: `Successfully imported ${createdReadings.length} glucose readings`,
+      imported: createdReadings.length,
+      errors: errors.length > 0 ? errors : [],
+    });
+  } catch (err: any) {
+    console.error('CSV Import Error:', err);
+    res.status(500).json({ error: `Failed to import CSV file: ${err.message}` });
+  }
+});

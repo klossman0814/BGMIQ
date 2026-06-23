@@ -12,6 +12,10 @@ export default function GlucoseLogPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importResult, setImportResult] = useState<{message: string, imported: number, errors: string[]} | null>(null);
   const navigate = useNavigate();
 
   const fetchReadings = () => {
@@ -37,6 +41,38 @@ export default function GlucoseLogPage() {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImportFile(e.target.files[0]);
+    }
+  };
+
+  const handleImportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!importFile) return;
+
+    setImportLoading(true);
+    setImportResult(null);
+
+    try {
+      const response = await readingsApi.import(importFile);
+      const { data } = response;
+      setImportResult(data);
+      fetchReadings();
+    } catch (err: any) {
+      const msg = err.response?.data?.error || err.message || 'Network error occurred';
+      setImportResult({ message: 'Import failed', imported: 0, errors: [msg] });
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
+  const resetImport = () => {
+    setImportFile(null);
+    setImportResult(null);
+    setShowImportModal(false);
+  };
+
   if (loading) return <LoadingSpinner text="Loading readings..." />;
   if (error) return <ErrorMessage message={error} onRetry={fetchReadings} />;
 
@@ -44,9 +80,17 @@ export default function GlucoseLogPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Glucose Log</h1>
-        <button onClick={() => navigate('/readings/new')} className="btn-primary">
-          + Add Reading
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => setShowImportModal(true)} 
+            className="btn-secondary"
+          >
+            Import from Libre3 CSV
+          </button>
+          <button onClick={() => navigate('/readings/new')} className="btn-primary">
+            + Add Reading
+          </button>
+        </div>
       </div>
 
       {readings.length === 0 ? (
@@ -110,6 +154,77 @@ export default function GlucoseLogPage() {
             </div>
           )}
         </>
+      )}
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h2 className="text-xl font-bold mb-4">Import from Libre3 CSV</h2>
+            
+            {importResult ? (
+              <div className="mb-4">
+                <p className="font-medium mb-2">{importResult.message}</p>
+                <p className="text-sm text-gray-600 mb-3">Successfully imported: {importResult.imported} readings</p>
+                {importResult.errors.length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-sm font-medium text-red-600 mb-1">Errors:</p>
+                    <ul className="text-xs text-red-600 space-y-1 max-h-32 overflow-y-auto">
+                      {importResult.errors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <button 
+                  onClick={resetImport}
+                  className="btn-primary mt-4"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleImportSubmit}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select CSV File
+                  </label>
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={handleFileChange}
+                    className="block w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-md file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-blue-50 file:text-blue-700
+                      hover:file:bg-blue-100"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    The CSV file should contain glucose readings with date/time and glucose value columns
+                  </p>
+                </div>
+                
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={resetImport}
+                    className="btn-secondary"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!importFile || importLoading}
+                    className="btn-primary disabled:opacity-50"
+                  >
+                    {importLoading ? 'Importing...' : 'Import'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

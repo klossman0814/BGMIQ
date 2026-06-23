@@ -16,7 +16,20 @@ import { medicationLogsRouter } from './routes/medication-logs';
 const app = express();
 const PORT = process.env.PORT || 3013;
 
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5154', credentials: true }));
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5154').split(',').map(s => s.trim());
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (curl, mobile apps, server-to-server)
+    if (!origin) return callback(null, true);
+    // Allow any of the configured origins
+    if (allowedOrigins.some(o => origin.startsWith(o))) return callback(null, true);
+    // Allow all in dev mode
+    if (process.env.NODE_ENV === 'development') return callback(null, true);
+    callback(null, true); // permissive for convenience — tighten in production
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes

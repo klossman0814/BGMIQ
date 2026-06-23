@@ -24,6 +24,9 @@ server {
     listen       80;
     server_name  localhost;
 
+    # Allow larger CSV file uploads (default is 1MB)
+    client_max_body_size 10M;
+
     # Gzip compression
     gzip on;
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript image/svg+xml;
